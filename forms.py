@@ -10,6 +10,12 @@ from wtforms import (
 from wtforms.validators import DataRequired, URL, Optional
 from wtforms.widgets import TextArea
 from fixed_data import states, GENRES
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+
+
+def get_artists():
+    from artist.models import Artist
+    return Artist.query.all()
 
 
 def make_state_form_attrs():
@@ -31,10 +37,12 @@ def make_genre_form_attrs():
 
 
 class ShowForm(FlaskForm):
-    artist_id = StringField("artist_id")
-    venue_id = StringField("venue_id")
+    artist = QuerySelectField(
+        "Select artist", validators=(DataRequired(),), query_factory=get_artists
+    )
+    venue = StringField("Select venue", validators=(DataRequired(),))
     start_time = DateTimeField(
-        "start_time", validators=[DataRequired()], default=datetime.today()
+        "Start time", validators=[DataRequired()], default=datetime.today()
     )
 
 

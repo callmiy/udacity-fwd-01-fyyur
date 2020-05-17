@@ -28,5 +28,9 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String)
 
     genres = db.Column(db.String(120))
+    shows = db.relationship("Show", lazy=True, backref=db.backref("artist", lazy=True),)
+
+    def __repr__(self):
+        return self.name
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
