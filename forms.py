@@ -22,7 +22,7 @@ def make_state_form_attrs():
     choices = [(state, state) for state in states]
 
     return {
-        "label": "states",
+        "label": "States",
         "choices": choices,
         "validators": (DataRequired(),),
     }
@@ -47,17 +47,20 @@ class ShowForm(FlaskForm):
 
 
 class VenueForm(FlaskForm):
-    name = StringField("name", validators=[DataRequired()])
-    city = StringField("city", validators=[DataRequired()])
+    name = StringField("Name", validators=[DataRequired()])
+    city = StringField("City", validators=[DataRequired()])
     state = SelectField(**make_state_form_attrs())
-    address = StringField("address", validators=[DataRequired()])
-    phone = StringField("phone")
+    address = StringField("Address", validators=[DataRequired()])
+    phone = StringField("Phone")
     image_link = StringField("image_link")
     genres = SelectMultipleField(
         # TODO implement enum restriction
         **make_genre_form_attrs()
     )
-    facebook_link = StringField("facebook_link", validators=[URL()])
+    facebook_link = StringField("Facebook link", validators=[URL()])
+    website = StringField("Website", validators=(Optional(), URL()))
+    seeking_talent = BooleanField("Seeking talent")
+    seeking_description = StringField("Seeking Description", widget=TextArea())
 
 
 class ArtistForm(FlaskForm):
