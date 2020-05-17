@@ -12,7 +12,7 @@ DEBUG = True
 
 # TODO IMPLEMENT DATABASE URL
 SQLALCHEMY_DATABASE_URI = (
-    "export DB_URI=postgresql://udacity@:5431/fyyur"
+    "postgresql://udacity@:5431/fyyur?"
     "host=/home/kanmii/.asdf/installs/postgres/12.2/data/tmp/"
 )
 SQLALCHEMY_TRACK_MODIFICATIONS = False
