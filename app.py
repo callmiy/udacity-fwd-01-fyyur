@@ -68,7 +68,7 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.   # noqa E501
 
 # ----------------------------------------------------------------------------#
 # Filters.
@@ -109,9 +109,9 @@ def venues():
 
 @app.route("/venues/search", methods=["POST"])
 def search_venues():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-    # seach for Hop should return "The Musical Hop".
-    # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.   # noqa E501
+    # search for Hop should return "The Musical Hop".
+    # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"   # noqa E501
     return render_template(
         "pages/search_venues.html",
         results=search_venues_data,
@@ -153,9 +153,9 @@ def create_venue_submission():
 @app.route("/venues/<venue_id>", methods=["DELETE"])
 def delete_venue(venue_id):
     # TODO: Complete this endpoint for taking a venue_id, and using
-    # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+    # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.   # noqa E501
 
-    # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
+    # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that   # noqa E501
     # clicking that button delete it from the db then redirect the user to the homepage
     return None
 
@@ -170,8 +170,8 @@ def artists():
 
 @app.route("/artists/search", methods=["POST"])
 def search_artists():
-    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-    # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
+    # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.   # noqa E501
+    # search for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".   # noqa E501
     # search for "band" should return "The Wild Sax Band".
     return render_template(
         "pages/search_artists.html",
