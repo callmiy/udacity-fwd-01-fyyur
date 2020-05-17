@@ -1,32 +1,36 @@
 from datetime import datetime
-from flask_wtf import Form
-from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
-from wtforms.validators import DataRequired, AnyOf, URL
-from fixed_data import states, genres
+from flask_wtf import FlaskForm
+from wtforms import (
+    StringField,
+    SelectField,
+    SelectMultipleField,
+    DateTimeField,
+    BooleanField,
+)
+from wtforms.validators import DataRequired, URL, Optional
+from wtforms.widgets import TextArea
+from fixed_data import states, GENRES
 
 
 def make_state_form_attrs():
-    choices = ((state, state) for state in states)
+    choices = [(state, state) for state in states]
 
     return {
         "label": "states",
         "choices": choices,
-        "validators": (
-            DataRequired(),
-            AnyOf(values=states, message="Please select from dropdown"),
-        ),
+        "validators": (DataRequired(),),
     }
 
 
 def make_genre_form_attrs():
     return {
         "label": "genres",
-        "choices": genres.items(),
+        "choices": GENRES.items(),
         "validators": (DataRequired(),),
     }
 
 
-class ShowForm(Form):
+class ShowForm(FlaskForm):
     artist_id = StringField("artist_id")
     venue_id = StringField("venue_id")
     start_time = DateTimeField(
@@ -34,7 +38,7 @@ class ShowForm(Form):
     )
 
 
-class VenueForm(Form):
+class VenueForm(FlaskForm):
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
     state = SelectField(**make_state_form_attrs())
@@ -48,7 +52,7 @@ class VenueForm(Form):
     facebook_link = StringField("facebook_link", validators=[URL()])
 
 
-class ArtistForm(Form):
+class ArtistForm(FlaskForm):
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
     state = SelectField(**make_state_form_attrs())
@@ -64,8 +68,11 @@ class ArtistForm(Form):
     facebook_link = StringField(
         # TODO implement enum restriction
         "facebook_link",
-        validators=[URL()],
+        validators=(Optional(), URL()),
     )
+    website = StringField("Website", validators=(Optional(), URL()))
+    seeking_venue = BooleanField("Seeking Venue")
+    seeking_description = StringField("Seeking Description", widget=TextArea())
 
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

@@ -53,7 +53,7 @@ states = (
     "WY",
 )
 
-genres = {
+GENRES = {
     "1": "Alternative",
     "2": "Blues",
     "3": "Classical",
@@ -74,3 +74,7 @@ genres = {
     "18": "Soul",
     "19": "Other",
 }
+
+
+def from_genre_ids(genre_ids):
+    return [GENRES[id] for id in genre_ids.split(",")]

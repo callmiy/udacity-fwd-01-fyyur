@@ -1,12 +1,13 @@
+import sys
 from flask import render_template, request, redirect, url_for, flash
-from app import app
-from artist.models import Artist
+from app import app, db
+from artist.models import Artist, ARTIST_SIMPLE_ATTRS
 from mock_data import (
     search_artists_data,
-    show_artist_data,
     edit_artist_data,
 )
 from forms import ArtistForm
+from fixed_data import from_genre_ids
 
 
 @app.route("/artists")
@@ -32,7 +33,8 @@ def search_artists():
 def show_artist(artist_id):
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
-    data = list(filter(lambda d: d["id"] == artist_id, show_artist_data))[0]
+    data = Artist.query.get(artist_id)
+    data.genres = from_genre_ids(data.genres)
     return render_template("pages/show_artist.html", artist=data)
 
 
@@ -68,8 +70,30 @@ def create_artist_submission():
     # called upon submitting the new artist listing form
     # TODO: insert form data as a new Venue record in the db, instead
     # TODO: modify data to be the data object returned from db insertion
+    form = ArtistForm()
+    name = form.name.data
+    created = False
 
-    # on successful db insert, flash success
-    flash("Artist " + request.form["name"] + " was successfully listed!")
+    if form.validate_on_submit():
+        try:
+            attrs = {attr: getattr(form, attr).data for attr in ARTIST_SIMPLE_ATTRS}
+
+            genres = ",".join(x for x in form.genres.data)
+            new_artist = Artist(**attrs, genres=genres)
+            db.session.add(new_artist)
+            db.session.commit()
+            # on successful db insert, flash success
+            created = True
+            flash("Artist " + name + " was successfully listed!")
+
+        except:
+            print(sys.exc_info())
+        finally:
+            db.session.close()
+
+        if created:
+            return redirect(url_for("index"))
+
     # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+    flash("An error occurred. Artist " + name + " could not be listed.")
+    return render_template("forms/new_artist.html", form=form)
