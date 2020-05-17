@@ -72,6 +72,35 @@ def make_state_form_attrs():
     }
 
 
+def make_genre_form_attrs():
+    genres = {
+        "1": "Alternative",
+        "2": "Blues",
+        "3": "Classical",
+        "4": "Country",
+        "5": "Electronic",
+        "6": "Folk",
+        "7": "Funk",
+        "8": "Hip-Hop",
+        "9": "Heavy Metal",
+        "10": "Instrumental",
+        "11": "Jazz",
+        "12": "Musical Theatre",
+        "13": "Pop",
+        "14": "Punk",
+        "15": "R&B",
+        "16": "Reggae",
+        "17": "Rock n Roll",
+        "18": "Soul",
+        "19": "Other",
+    }
+    return {
+        "label": "genres",
+        "choices": genres.items(),
+        "validators": (DataRequired(),),
+    }
+
+
 class ShowForm(Form):
     artist_id = StringField("artist_id")
     venue_id = StringField("venue_id")
@@ -89,29 +118,7 @@ class VenueForm(Form):
     image_link = StringField("image_link")
     genres = SelectMultipleField(
         # TODO implement enum restriction
-        "genres",
-        validators=[DataRequired()],
-        choices=[
-            ("Alternative", "Alternative"),
-            ("Blues", "Blues"),
-            ("Classical", "Classical"),
-            ("Country", "Country"),
-            ("Electronic", "Electronic"),
-            ("Folk", "Folk"),
-            ("Funk", "Funk"),
-            ("Hip-Hop", "Hip-Hop"),
-            ("Heavy Metal", "Heavy Metal"),
-            ("Instrumental", "Instrumental"),
-            ("Jazz", "Jazz"),
-            ("Musical Theatre", "Musical Theatre"),
-            ("Pop", "Pop"),
-            ("Punk", "Punk"),
-            ("R&B", "R&B"),
-            ("Reggae", "Reggae"),
-            ("Rock n Roll", "Rock n Roll"),
-            ("Soul", "Soul"),
-            ("Other", "Other"),
-        ],
+        **make_genre_form_attrs()
     )
     facebook_link = StringField("facebook_link", validators=[URL()])
 
@@ -127,29 +134,7 @@ class ArtistForm(Form):
     image_link = StringField("image_link")
     genres = SelectMultipleField(
         # TODO implement enum restriction
-        "genres",
-        validators=[DataRequired()],
-        choices=[
-            ("Alternative", "Alternative"),
-            ("Blues", "Blues"),
-            ("Classical", "Classical"),
-            ("Country", "Country"),
-            ("Electronic", "Electronic"),
-            ("Folk", "Folk"),
-            ("Funk", "Funk"),
-            ("Hip-Hop", "Hip-Hop"),
-            ("Heavy Metal", "Heavy Metal"),
-            ("Instrumental", "Instrumental"),
-            ("Jazz", "Jazz"),
-            ("Musical Theatre", "Musical Theatre"),
-            ("Pop", "Pop"),
-            ("Punk", "Punk"),
-            ("R&B", "R&B"),
-            ("Reggae", "Reggae"),
-            ("Rock n Roll", "Rock n Roll"),
-            ("Soul", "Soul"),
-            ("Other", "Other"),
-        ],
+        **make_genre_form_attrs()
     )
     facebook_link = StringField(
         # TODO implement enum restriction
