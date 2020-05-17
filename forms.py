@@ -2,64 +2,10 @@ from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.validators import DataRequired, AnyOf, URL
+from fixed_data import states, genres
 
 
 def make_state_form_attrs():
-    states = (
-        "",
-        "AL",
-        "AK",
-        "AZ",
-        "AR",
-        "CA",
-        "CO",
-        "CT",
-        "DE",
-        "DC",
-        "FL",
-        "GA",
-        "HI",
-        "ID",
-        "IL",
-        "IN",
-        "IA",
-        "KS",
-        "KY",
-        "LA",
-        "ME",
-        "MT",
-        "NE",
-        "NV",
-        "NH",
-        "NJ",
-        "NM",
-        "NY",
-        "NC",
-        "ND",
-        "OH",
-        "OK",
-        "OR",
-        "MD",
-        "MA",
-        "MI",
-        "MN",
-        "MS",
-        "MO",
-        "PA",
-        "RI",
-        "SC",
-        "SD",
-        "TN",
-        "TX",
-        "UT",
-        "VT",
-        "VA",
-        "WA",
-        "WV",
-        "WI",
-        "WY",
-    )
-
     choices = ((state, state) for state in states)
 
     return {
@@ -73,27 +19,6 @@ def make_state_form_attrs():
 
 
 def make_genre_form_attrs():
-    genres = {
-        "1": "Alternative",
-        "2": "Blues",
-        "3": "Classical",
-        "4": "Country",
-        "5": "Electronic",
-        "6": "Folk",
-        "7": "Funk",
-        "8": "Hip-Hop",
-        "9": "Heavy Metal",
-        "10": "Instrumental",
-        "11": "Jazz",
-        "12": "Musical Theatre",
-        "13": "Pop",
-        "14": "Punk",
-        "15": "R&B",
-        "16": "Reggae",
-        "17": "Rock n Roll",
-        "18": "Soul",
-        "19": "Other",
-    }
     return {
         "label": "genres",
         "choices": genres.items(),
