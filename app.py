@@ -9,7 +9,7 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging
 from logging import Formatter, FileHandler
-from forms import *
+from forms import VenueForm, ArtistForm, ShowForm
 
 # ----------------------------------------------------------------------------#
 # App Config.
