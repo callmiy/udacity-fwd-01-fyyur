@@ -8,7 +8,7 @@ from mock_data import (
     edit_venue_data,
 )
 from venue.models import Venue, VENUE_SIMPLE_ATTRS
-from show.models import Show
+from show.models import Show, show_to_dict
 from fixed_data import GENRES
 
 
@@ -59,14 +59,8 @@ def get_show_venue_data(venue_id):
     upcoming_shows = []
 
     for show in shows:
-        artist = show.artist
         start_time = show.start_time
-        show_data = {
-            "artist_id": show.artist_id,
-            "start_time": start_time.isoformat(),
-            "artist_name": artist.name,
-            "artist_image_link": artist.image_link,
-        }
+        show_data = show_to_dict(show)
 
         past_shows.append(show_data) if start_time < today else upcoming_shows.append(
             show_data
