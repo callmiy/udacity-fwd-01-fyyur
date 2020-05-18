@@ -3,10 +3,7 @@ from datetime import datetime
 from flask import render_template, request, flash, url_for, redirect
 from app import app, db
 from forms import VenueForm
-from mock_data import (
-    search_venues_data,
-    edit_venue_data,
-)
+from mock_data import edit_venue_data
 from venue.models import Venue, VENUE_SIMPLE_ATTRS
 from show.models import Show, show_to_dict
 from fixed_data import genres_from_ids
@@ -81,6 +78,24 @@ def get_show_venue_data(venue_id):
     return venue
 
 
+def get_search_venue_data(search_term):
+    today = datetime.now()
+    query = Venue.query.filter(Venue.name.ilike("%{}%".format(search_term)))
+    data = query.all()
+
+    [
+        setattr(
+            d, "num_upcoming_shows", len([s for s in d.shows if s.start_time >= today]),
+        )
+        for d in data
+    ]
+
+    return {
+        "count": len(data),
+        "data": data,
+    }
+
+
 @app.route("/venues")
 def venues():
     # TODO: replace with real venues data.
@@ -94,10 +109,11 @@ def search_venues():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.   # noqa E501
     # search for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"   # noqa E501
+    search_term = request.form.get("search_term", "")
+    results = get_search_venue_data(search_term)
+
     return render_template(
-        "pages/search_venues.html",
-        results=search_venues_data,
-        search_term=request.form.get("search_term", ""),
+        "pages/search_venues.html", results=results, search_term=search_term,
     )
 
 
