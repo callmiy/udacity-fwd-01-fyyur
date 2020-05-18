@@ -2,7 +2,7 @@ import sys
 from flask import render_template, flash, redirect, url_for
 from app import app
 from forms import ShowForm
-from show.models import Show
+from show.models import Show, show_to_dict
 from app import db
 
 
@@ -11,7 +11,9 @@ def shows():
     # displays list of shows at /shows
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
-    return render_template("pages/shows.html", shows=Show.query.all())
+    shows = Show.query.all()
+    data = [show_to_dict(show) for show in shows]
+    return render_template("pages/shows.html", shows=data)
 
 
 @app.route("/shows/create")
