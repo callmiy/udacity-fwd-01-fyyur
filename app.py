@@ -62,6 +62,46 @@ def index():
     return render_template("pages/home.html")
 
 
+@app.route("/recent-listings", methods=["POST"])
+def recent_listings():
+    sql = """
+        SELECT *
+        FROM (
+          (
+          SELECT
+            id,
+            name,
+            'v' t
+          FROM venue
+          )
+        UNION ALL
+          (
+          SELECT
+            id,
+            name,
+            'a' t
+          FROM artist
+          )
+        ) f
+        ORDER by f.id
+        LIMIT 10;
+    """
+
+    results = db.session.execute(sql).fetchall()
+
+    if not len(results):
+        return ""
+
+    artists = []
+    venues = []
+    for (did, name, tag) in results:
+        data = {"id": did, "name": name}
+        artists.append(data) if tag == "a" else venues.append(data)
+
+    data = {"artists": artists, "venues": venues}
+    return render_template("pages/recent-listings.html", data=data)
+
+
 @app.errorhandler(404)
 def not_found_error(error):
     return render_template("errors/404.html"), 404

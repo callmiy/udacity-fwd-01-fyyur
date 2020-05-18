@@ -1,0 +1,10 @@
+<h3 style="text-align: center;">Recent Listings</h3>
+{%if data.artists%}
+<h4>Artists</h4>
+{% with artists=data.artists %} {% include 'pages/artist-partial.html' %} {%
+endwith %} {%endif%}
+<br />
+{%if data.venues%}
+<h4>Venues</h4>
+{% with venues=data.venues %} {% include 'pages/venue-partial.html' %} {%
+endwith %} {%endif%}
