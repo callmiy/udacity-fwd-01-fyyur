@@ -9,6 +9,7 @@ from mock_data import (
 )
 from venue.models import Venue, VENUE_SIMPLE_ATTRS
 from show.models import Show
+from fixed_data import GENRES
 
 
 def get_venues_data():
@@ -50,6 +51,41 @@ def get_venues_data():
     ]
 
 
+def get_show_venue_data(venue_id):
+    today = datetime.now()
+    venue = Venue.query.get(venue_id)
+    shows = venue.shows
+    past_shows = []
+    upcoming_shows = []
+
+    for show in shows:
+        artist = show.artist
+        start_time = show.start_time
+        show_data = {
+            "artist_id": show.artist_id,
+            "start_time": start_time.isoformat(),
+            "artist_name": artist.name,
+            "artist_image_link": artist.image_link,
+        }
+
+        past_shows.append(show_data) if start_time < today else upcoming_shows.append(
+            show_data
+        )
+
+    data = {attr: getattr(venue, attr) for attr in VENUE_SIMPLE_ATTRS}
+    data.update(
+        {
+            "genres": [GENRES[did] for did in venue.genres.split(",")],
+            "past_shows": past_shows,
+            "upcoming_shows": upcoming_shows,
+            "past_shows_count": len(past_shows),
+            "upcoming_shows_count": len(upcoming_shows),
+        }
+    )
+
+    return data
+
+
 @app.route("/venues")
 def venues():
     # TODO: replace with real venues data.
@@ -74,7 +110,8 @@ def search_venues():
 def show_venue(venue_id):
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
-    return render_template("pages/show_venue.html", venue=Venue.query.get(venue_id))
+    data = get_show_venue_data(venue_id)
+    return render_template("pages/show_venue.html", venue=data)
 
 
 #  Create Venue
