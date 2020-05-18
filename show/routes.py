@@ -1,8 +1,9 @@
-from flask import render_template, flash
+import sys
+from flask import render_template, flash, redirect, url_for
 from app import app
 from forms import ShowForm
 from show.models import Show
-from artist.models import Artist
+from app import db
 
 
 @app.route("/shows")
@@ -24,10 +25,28 @@ def create_shows():
 def create_show_submission():
     # called to create new shows in the db, upon submitting new show listing form
     # TODO: insert form data as a new Show record in the db, instead
+    form = ShowForm()
+    created = False
 
-    # on successful db insert, flash success
-    flash("Show was successfully listed!")
+    if form.validate_on_submit():
+        try:
+            new_show = Show(start_time=form.start_time.data)
+            new_show.venue = form.venue.data
+            new_show.artist = form.artist.data
+            db.session.add(new_show)
+            db.session.commit()
+            # on successful db insert, flash success
+            created = True
+            flash("Show was successfully listed!")
+
+        except:
+            print(sys.exc_info())
+        finally:
+            db.session.close()
+
+        if created:
+            return redirect(url_for("index"))
+
     # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Show could not be listed.')
-    # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    return render_template("pages/home.html")
+    flash("An error occurred. Show could not be listed.")
+    return render_template("forms/new_show.html", form=form)

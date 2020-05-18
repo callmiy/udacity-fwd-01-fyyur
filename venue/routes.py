@@ -1,19 +1,61 @@
+import sys
+from datetime import datetime
 from flask import render_template, request, flash, url_for, redirect
-from app import app
+from app import app, db
 from forms import VenueForm
 from mock_data import (
-    venues_data,
     search_venues_data,
-    show_venue_data,
     edit_venue_data,
 )
+from venue.models import Venue, VENUE_SIMPLE_ATTRS
+from show.models import Show
+
+
+def get_venues_data():
+    today = datetime.now()
+
+    start_time_query = (
+        db.session.query(Show.id, Show.venue_id)
+        .filter(Show.start_time >= today)
+        .subquery()
+    )
+
+    venues_query = (
+        db.session.query(
+            Venue.id,
+            Venue.name,
+            Venue.city,
+            Venue.state,
+            db.func.count(start_time_query.c.id),
+        )
+        .outerjoin(start_time_query, start_time_query.c.venue_id == Venue.id)
+        .group_by(Venue.id)
+    )
+
+    venues = venues_query.all()
+
+    cities_map = {}
+
+    for venue in venues:
+        city = venue[2]
+        state, city_data = cities_map.get(city, [venue[3], []])
+        city_data.append(
+            {"id": venue[0], "name": venue[1], "num_upcoming_shows": venue[4]}
+        )
+        cities_map[city] = [state, city_data]
+
+    return [
+        {"city": city, "state": data[0], "venues": data[1]}
+        for city, data in cities_map.items()
+    ]
 
 
 @app.route("/venues")
 def venues():
     # TODO: replace with real venues data.
     #       num_shows should be aggregated based on number of upcoming shows per venue.
-    return render_template("pages/venues.html", areas=venues_data)
+    data = get_venues_data()
+    return render_template("pages/venues.html", areas=data)
 
 
 @app.route("/venues/search", methods=["POST"])
@@ -32,8 +74,7 @@ def search_venues():
 def show_venue(venue_id):
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
-    data = list(filter(lambda d: d["id"] == venue_id, show_venue_data))[0]
-    return render_template("pages/show_venue.html", venue=data)
+    return render_template("pages/show_venue.html", venue=Venue.query.get(venue_id))
 
 
 #  Create Venue
@@ -50,13 +91,33 @@ def create_venue_form():
 def create_venue_submission():
     # TODO: insert form data as a new Venue record in the db, instead
     # TODO: modify data to be the data object returned from db insertion
+    form = VenueForm()
+    name = form.name.data
+    created = False
+    if form.validate_on_submit():
+        try:
+            attrs = {attr: getattr(form, attr).data for attr in VENUE_SIMPLE_ATTRS}
 
-    # on successful db insert, flash success
-    flash("Venue " + request.form["name"] + " was successfully listed!")
+            genres = ",".join(x for x in form.genres.data)
+            new_venue = Venue(**attrs, genres=genres)
+            db.session.add(new_venue)
+            db.session.commit()
+            # on successful db insert, flash success
+            created = True
+            flash("Venue " + name + " was successfully listed!")
+
+        except:
+            print(sys.exc_info())
+        finally:
+            db.session.close()
+
+        if created:
+            return redirect(url_for("index"))
+
     # TODO: on unsuccessful db insert, flash an error instead.
-    # e.g., flash('An error occurred. Venue ' + data.name + ' could not be listed.')
     # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-    return render_template("pages/home.html")
+    flash("An error occurred. Venue " + name + " could not be listed.")
+    return render_template("forms/new_venue.html", form=form)
 
 
 @app.route("/venues/<venue_id>", methods=["DELETE"])

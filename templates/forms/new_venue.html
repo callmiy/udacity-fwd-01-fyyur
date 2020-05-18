@@ -1,7 +1,7 @@
 {% extends 'layouts/main.html' %} {% block title %}New Venue{% endblock %} {%
 block content %}
 <div class="form-wrapper">
-  <form method="post" class="form">
+  <form method="post" class="form" novalidate>
     {{ form.hidden_tag() }}
     <h3 class="form-heading">
       List a new venue
@@ -9,6 +9,15 @@ block content %}
         <i class="fa fa-home pull-right"></i>
       </a>
     </h3>
+
+    {% for field in ['name', 'city', 'state', 'phone', 'genres',
+    'facebook_link', 'website'] %} {% if form[field].errors %}
+    <div class="text-danger">
+      {% for error in form[field].errors %}
+      <div>{{ field }}: {{ error }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endfor %}
 
     <div class="form-group">
       {{ form.name.label() }}
@@ -19,10 +28,10 @@ block content %}
       <label>{{ form.city.label.text }} & {{ form.state.label.text }}</label>
       <div class="form-inline">
         <div class="form-group">
-          {{ form.city(class_ = 'form-control', placeholder='City') }}
+          {{ form.city(class_ = 'form-control') }}
         </div>
         <div class="form-group">
-          {{ form.state(class_ = 'form-control', placeholder='State') }}
+          {{ form.state(class_ = 'form-control') }}
         </div>
       </div>
     </div>

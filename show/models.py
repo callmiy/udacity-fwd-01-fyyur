@@ -1,4 +1,5 @@
 from app import db
+from venue.models import Venue  # noqa F401
 
 
 class Show(db.Model):

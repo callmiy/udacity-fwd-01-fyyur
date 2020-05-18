@@ -1,9 +1,18 @@
 {% extends 'layouts/main.html' %} {% block title %}New Show Listing{% endblock
 %} {% block content %}
 <div class="form-wrapper">
-  <form method="post" class="form">
+  <form method="post" class="form" novalidate>
     {{ form.hidden_tag() }}
     <h3 class="form-heading">List a new show</h3>
+
+    {% for field in ['artist', 'venue', 'start_time'] %} {% if
+    form[field].errors %}
+    <div class="text-danger">
+      {% for error in form[field].errors %}
+      <div>{{ field }}: {{ error }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endfor %}
 
     <div class="form-group">
       {{ form.artist.label() }}
