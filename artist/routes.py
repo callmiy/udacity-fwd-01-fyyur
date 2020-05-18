@@ -2,10 +2,7 @@ import sys
 from flask import render_template, request, redirect, url_for, flash
 from app import app, db
 from artist.models import Artist, ARTIST_SIMPLE_ATTRS
-from mock_data import (
-    search_artists_data,
-    edit_artist_data,
-)
+from mock_data import edit_artist_data
 from forms import ArtistForm
 from fixed_data import genres_from_ids
 from datetime import datetime
@@ -50,10 +47,14 @@ def search_artists():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.   # noqa E501
     # search for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".   # noqa E501
     # search for "band" should return "The Wild Sax Band".
+
+    search_term = request.form.get("search_term", "")
+    query = Artist.query.filter(Artist.name.ilike("%{}%".format(search_term)))
+    data = query.all()
+    results = {"count": len(data), "data": data}
+
     return render_template(
-        "pages/search_artists.html",
-        results=search_artists_data,
-        search_term=request.form.get("search_term", ""),
+        "pages/search_artists.html", results=results, search_term=search_term,
     )
 
 
