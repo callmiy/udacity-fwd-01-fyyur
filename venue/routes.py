@@ -66,18 +66,19 @@ def get_show_venue_data(venue_id):
             show_data
         )
 
-    data = {attr: getattr(venue, attr) for attr in VENUE_SIMPLE_ATTRS}
-    data.update(
-        {
-            "genres": from_genre_ids(venue.genres),
+    venue.genres = from_genre_ids(venue.genres)
+
+    [
+        setattr(venue, attr, value)
+        for attr, value in {
             "past_shows": past_shows,
             "upcoming_shows": upcoming_shows,
             "past_shows_count": len(past_shows),
             "upcoming_shows_count": len(upcoming_shows),
-        }
-    )
+        }.items()
+    ]
 
-    return data
+    return venue
 
 
 @app.route("/venues")
