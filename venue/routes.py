@@ -9,7 +9,7 @@ from mock_data import (
 )
 from venue.models import Venue, VENUE_SIMPLE_ATTRS
 from show.models import Show, show_to_dict
-from fixed_data import GENRES
+from fixed_data import from_genre_ids
 
 
 def get_venues_data():
@@ -69,7 +69,7 @@ def get_show_venue_data(venue_id):
     data = {attr: getattr(venue, attr) for attr in VENUE_SIMPLE_ATTRS}
     data.update(
         {
-            "genres": [GENRES[did] for did in venue.genres.split(",")],
+            "genres": from_genre_ids(venue.genres),
             "past_shows": past_shows,
             "upcoming_shows": upcoming_shows,
             "past_shows_count": len(past_shows),
