@@ -76,5 +76,5 @@ GENRES = {
 }
 
 
-def from_genre_ids(genre_ids):
+def genres_from_ids(genre_ids):
     return [GENRES[id] for id in genre_ids.split(",")]

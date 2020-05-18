@@ -9,7 +9,7 @@ from mock_data import (
 )
 from venue.models import Venue, VENUE_SIMPLE_ATTRS
 from show.models import Show, show_to_dict
-from fixed_data import from_genre_ids
+from fixed_data import genres_from_ids
 
 
 def get_venues_data():
@@ -66,7 +66,7 @@ def get_show_venue_data(venue_id):
             show_data
         )
 
-    venue.genres = from_genre_ids(venue.genres)
+    venue.genres = genres_from_ids(venue.genres)
 
     [
         setattr(venue, attr, value)

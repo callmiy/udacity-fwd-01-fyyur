@@ -7,7 +7,7 @@ from mock_data import (
     edit_artist_data,
 )
 from forms import ArtistForm
-from fixed_data import from_genre_ids
+from fixed_data import genres_from_ids
 
 
 @app.route("/artists")
@@ -34,7 +34,7 @@ def show_artist(artist_id):
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
     data = Artist.query.get(artist_id)
-    data.genres = from_genre_ids(data.genres)
+    data.genres = genres_from_ids(data.genres)
     return render_template("pages/show_artist.html", artist=data)
 
 
