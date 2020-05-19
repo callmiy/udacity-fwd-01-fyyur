@@ -10,7 +10,7 @@ from show.models import show_to_dict
 from availability.models import AvailableTime
 
 
-def show_artist_data(artist_id):
+def get_show_artist_data(artist_id):
     today = datetime.now()
     artist = Artist.query.get(artist_id)
     artist.genres = genres_from_ids(artist.genres)
@@ -63,7 +63,7 @@ def search_artists():
 def show_artist(artist_id):
     # shows the venue page with the given venue_id
     # TODO: replace with real venue data from the venues table, using venue_id
-    data = show_artist_data(artist_id)
+    data = get_show_artist_data(artist_id)
     return render_template("pages/show_artist.html", artist=data)
 
 
