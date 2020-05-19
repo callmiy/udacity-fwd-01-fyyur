@@ -132,7 +132,9 @@ class ArtistForm(FlaskForm):
     website = StringField("Website", validators=(Optional(), URL()))
     seeking_venue = BooleanField("Seeking Venue")
     seeking_description = StringField("Seeking Description", widget=TextArea())
-    available_times = FieldList(FormField(AvailableTimeForm), min_entries=1)
+    available_times = FieldList(
+        FormField(AvailableTimeForm), min_entries=1, validators=(Optional(),)
+    )
 
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
