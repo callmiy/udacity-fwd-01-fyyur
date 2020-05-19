@@ -57,7 +57,12 @@ def make_genre_form_attrs():
 
 
 class ShowForm(FlaskForm):
-    artist = make_related_artist_field()
+    artist = QuerySelectField(
+        "Select artist",
+        validators=(DataRequired(),),
+        query_factory=get_artists,
+        allow_blank=True,
+    )
     venue = QuerySelectField(
         "Select venue",
         validators=(DataRequired(),),
