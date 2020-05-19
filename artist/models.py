@@ -29,6 +29,9 @@ class Artist(db.Model):
 
     genres = db.Column(db.String(120))
     shows = db.relationship("Show", lazy=True, backref=db.backref("artist", lazy=True),)
+    available_times = db.relationship(
+        "AvailableTime", lazy=True, backref=db.backref("artist", lazy=True),
+    )
 
     def __repr__(self):
         return self.name

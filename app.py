@@ -23,6 +23,7 @@ migrate = Migrate(app, db)
 
 
 import show.routes  # noqa E401
+import availability.models  # noqa E401
 import artist.routes  # noqa E401
 import venue.routes  # noqa E401
 

@@ -7,6 +7,7 @@ from forms import ArtistForm
 from fixed_data import genres_from_ids
 from datetime import datetime
 from show.models import show_to_dict
+from availability.models import AvailableTime
 
 
 def show_artist_data(artist_id):
@@ -107,7 +108,15 @@ def create_artist_submission():
             attrs = {attr: getattr(form, attr).data for attr in ARTIST_SIMPLE_ATTRS}
 
             genres = ",".join(x for x in form.genres.data)
-            new_artist = Artist(**attrs, genres=genres)
+
+            new_artist = Artist(
+                **attrs,
+                genres=genres,
+                available_times=[
+                    AvailableTime(**data) for data in form.available_times.data
+                ]
+            )
+
             db.session.add(new_artist)
             db.session.commit()
             # on successful db insert, flash success

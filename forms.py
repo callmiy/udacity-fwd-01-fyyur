@@ -6,11 +6,24 @@ from wtforms import (
     SelectMultipleField,
     DateTimeField,
     BooleanField,
+    FieldList,
+    FormField,
+    Form,
 )
 from wtforms.validators import DataRequired, URL, Optional
 from wtforms.widgets import TextArea
 from fixed_data import states, GENRES
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from wtforms_components import TimeField
+
+
+def make_related_artist_field():
+    QuerySelectField(
+        "Select artist",
+        validators=(DataRequired(),),
+        query_factory=get_artists,
+        allow_blank=True,
+    )
 
 
 def get_artists():
@@ -44,12 +57,7 @@ def make_genre_form_attrs():
 
 
 class ShowForm(FlaskForm):
-    artist = QuerySelectField(
-        "Select artist",
-        validators=(DataRequired(),),
-        query_factory=get_artists,
-        allow_blank=True,
-    )
+    artist = make_related_artist_field()
     venue = QuerySelectField(
         "Select venue",
         validators=(DataRequired(),),
@@ -78,6 +86,26 @@ class VenueForm(FlaskForm):
     seeking_description = StringField("Seeking Description", widget=TextArea())
 
 
+class AvailableTimeForm(Form):
+    artist = make_related_artist_field()
+    day_of_week = SelectField(
+        "Day of week",
+        validators=(DataRequired(),),
+        choices=(
+            ("", "-Select day-",),
+            ("1", "Monday",),
+            ("2", "Tuesday"),
+            ("3", "Wednesday"),
+            ("4", "Thursday"),
+            ("5", "Friday"),
+            ("6", "Saturday"),
+            ("7", "Sunday"),
+        ),
+    )
+    from_time = TimeField("From time", validators=[DataRequired()])
+    to_time = TimeField("To time", validators=(Optional(),))
+
+
 class ArtistForm(FlaskForm):
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
@@ -99,6 +127,7 @@ class ArtistForm(FlaskForm):
     website = StringField("Website", validators=(Optional(), URL()))
     seeking_venue = BooleanField("Seeking Venue")
     seeking_description = StringField("Seeking Description", widget=TextArea())
+    available_times = FieldList(FormField(AvailableTimeForm), min_entries=1)
 
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

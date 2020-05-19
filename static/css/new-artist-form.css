@@ -1,0 +1,21 @@
+.availabilities {
+  margin-bottom: 30px;
+}
+
+.availability__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.availability {
+  margin-top: 20px;
+}
+
+.availability__remove--hidden {
+  display: none;
+}
+
+.availability__remove-wrapper {
+  text-align: right;
+  margin-top: 10px;
+}

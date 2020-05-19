@@ -1,0 +1,28 @@
+<div class="availability {% if index == 0 %} availability--first {% endif %}">
+  <div class="availability__row availability__row--entry">
+    <div>
+      {{
+      availability.day_of_week(class_ = 'form-control availability__control')
+      }}
+    </div>
+
+    <div>
+      {{
+      availability.from_time(class_ = 'form-control availability__control')
+      }}
+    </div>
+
+    <div>
+      {{ availability.to_time(class_ = 'form-control availability__control') }}
+    </div>
+  </div>
+
+  <div class="availability__remove-wrapper">
+    <button
+      type="btn btn-small"
+      class="availability__remove {% if size == 1 %} availability__remove--hidden {% endif %}"
+    >
+      Remove
+    </button>
+  </div>
+</div>
