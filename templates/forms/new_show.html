@@ -1,6 +1,8 @@
-{% extends 'layouts/main.html' %} {% block title %}New Show Listing{% endblock
-%} {% block content %}
-<div class="form-wrapper">
+{% extends 'layouts/main.html' %} {% block end_head %}
+<link rel="stylesheet" href="/static/css/new-show-form.css" />
+<script src="/static/js/new-show-form.js" defer></script>
+{%endblock%} {% block title %}New Show Listing{% endblock %} {% block content %}
+<div class="form-wrapper" id="create-new-show-route">
   <form method="post" class="form" novalidate>
     {{ form.hidden_tag() }}
     <h3 class="form-heading">List a new show</h3>
@@ -16,7 +18,26 @@
 
     <div class="form-group">
       {{ form.artist.label() }}
-      {{ form.artist(class_ = 'form-control', autofocus = true) }}
+      {%with%} {% set artist_id = (form.artist.data and form.artist.data.id) or
+      '' %}
+      {{
+      form.artist(class_ = 'form-control', id='artist-control', autofocus = true, value=artist_id) }}
+
+      <div class="available--hidden available" id="available">
+        <h4>Available times</h4>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>S/N</th>
+              <th>Day of week</th>
+              <th>From</th>
+              <th>To</th>
+            </tr>
+          </thead>
+          <tbody id="available__body"></tbody>
+        </table>
+      </div>
+      {%endwith%}
     </div>
 
     <div class="form-group">

@@ -10,9 +10,9 @@ from wtforms import (
     FormField,
     Form,
 )
-from wtforms.validators import DataRequired, URL, Optional
+from wtforms.validators import DataRequired, URL, Optional, ValidationError
 from wtforms.widgets import TextArea
-from fixed_data import states, GENRES
+from fixed_data import states, GENRES, DAYS_OF_WEEK
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms_components import TimeField
 
@@ -56,10 +56,41 @@ def make_genre_form_attrs():
     }
 
 
+def artist_available_times_validator(form, field):
+    artist = field.data
+    available_times = artist.available_times
+
+    if not len(available_times):
+        return
+
+    start_time_data = form.start_time.data
+    start_date = start_time_data.date()
+    start_time = start_time_data.time()
+    selected_week_day = start_date.isoweekday()
+
+    available = False
+
+    for at in available_times:
+        day_of_week = at.day_of_week
+        from_time = at.from_time
+        to_time = at.to_time
+        not_week_day = day_of_week != selected_week_day
+        earlier_than_available = start_time < from_time
+        later_than_available = to_time and (to_time < start_time)
+
+        if not_week_day or earlier_than_available or later_than_available:
+            continue
+        available = True
+        break
+
+    if not available:
+        raise ValidationError("Artist is not available for booking on date")
+
+
 class ShowForm(FlaskForm):
     artist = QuerySelectField(
         "Select artist",
-        validators=(DataRequired(),),
+        validators=(DataRequired(), artist_available_times_validator,),
         query_factory=get_artists,
         allow_blank=True,
     )
@@ -94,18 +125,7 @@ class VenueForm(FlaskForm):
 class AvailableTimeForm(Form):
     artist = make_related_artist_field()
     day_of_week = SelectField(
-        "Day of week",
-        validators=(DataRequired(),),
-        choices=(
-            ("", "-Select day-",),
-            ("1", "Monday",),
-            ("2", "Tuesday"),
-            ("3", "Wednesday"),
-            ("4", "Thursday"),
-            ("5", "Friday"),
-            ("6", "Saturday"),
-            ("7", "Sunday"),
-        ),
+        "Day of week", validators=(DataRequired(),), choices=DAYS_OF_WEEK.items(),
     )
     from_time = TimeField("From time", validators=[DataRequired()])
     to_time = TimeField("To time", validators=(Optional(),))

@@ -78,3 +78,15 @@ GENRES = {
 
 def genres_from_ids(genre_ids):
     return [GENRES[id] for id in genre_ids.split(",")]
+
+
+DAYS_OF_WEEK = {
+    "": "-Select day-",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday",
+    "7": "Sunday",
+}

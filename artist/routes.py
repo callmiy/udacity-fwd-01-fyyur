@@ -1,10 +1,10 @@
 import sys
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from app import app, db
 from artist.models import Artist, ARTIST_SIMPLE_ATTRS
 from mock_data import edit_artist_data
 from forms import ArtistForm
-from fixed_data import genres_from_ids
+from fixed_data import genres_from_ids, DAYS_OF_WEEK
 from datetime import datetime
 from show.models import show_to_dict
 from availability.models import AvailableTime
@@ -134,3 +134,27 @@ def create_artist_submission():
     # TODO: on unsuccessful db insert, flash an error instead.
     flash("An error occurred. Artist " + name + " could not be listed.")
     return render_template("forms/new_artist.html", form=form)
+
+
+@app.route("/artists/available-times/<int:artist_id>", methods=["POST"])
+def get_available_times_route(artist_id):
+    times = (
+        Artist.query.join(AvailableTime)
+        .with_entities(AvailableTime)
+        .filter(Artist.id == artist_id)
+    ).all()
+
+    data = None
+
+    if times:
+        data = [
+            {
+                "id": time.id,
+                "day_of_week": DAYS_OF_WEEK[str(time.day_of_week)],
+                "from_time": time.from_time.isoformat(),
+                "to_time": time.to_time.isoformat() if time.to_time else None,
+            }
+            for time in times
+        ]
+
+    return jsonify({"data": data})
