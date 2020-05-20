@@ -1,6 +1,5 @@
 {% extends 'layouts/main.html' %} {% block title %}Fyyur | Venues Search{%
-endblock %} {% block content %}
-<h3>Number of search results for "{{ search_term }}": {{ results.count }}</h3>
+endblock %} {% block content %} {% include 'pages/search-results-header.html' %}
 <ul class="items">
   {% for venue in results.data %}
   <li>
@@ -14,4 +13,3 @@ endblock %} {% block content %}
   {% endfor %}
 </ul>
 {% endblock %}
-

@@ -49,13 +49,33 @@ def search_artists():
     # search for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".   # noqa E501
     # search for "band" should return "The Wild Sax Band".
 
-    search_term = request.form.get("search_term", "")
-    query = Artist.query.filter(Artist.name.ilike("%{}%".format(search_term)))
+    name = request.form.get("name", "")
+    city = request.form.get("city", "")
+    state = request.form.get("state", "")
+
+    name_filter_query = Artist.name.ilike("%{}%".format(name))
+    city_filter_query = Artist.city.ilike("%{}%".format(city))
+    state_filter_query = Artist.state.ilike("%{}%".format(state))
+
+    query = (
+        Artist.query.filter(name_filter_query)
+        .filter(city_filter_query)
+        .filter(state_filter_query)
+    )
+
     data = query.all()
     results = {"count": len(data), "data": data}
 
+    if not (name or city or state):
+        return render_template("pages/search_artists.html", results=results,)
+
+    search_term = {"name": name, "city": city, "state": state}
+
     return render_template(
-        "pages/search_artists.html", results=results, search_term=search_term,
+        "pages/search_artists.html",
+        results=results,
+        search_term=search_term,
+        is_artist=True,
     )
 
 

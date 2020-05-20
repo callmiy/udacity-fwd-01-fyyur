@@ -36,6 +36,18 @@
 {% block end_head %}{% endblock %}
 </head>
 <body>
+{% with %}
+{%set
+    search_venues_url = '/venues/search' if  ((request.endpoint == 'venues') or
+    (request.endpoint == 'search_venues') or
+    (request.endpoint == 'show_venue')) else ''
+
+%}
+{% set
+  search_artists_url = '/artists/search' if ((request.endpoint == 'artists') or
+    (request.endpoint == 'search_artists') or
+    (request.endpoint == 'show_artist'))  else ''
+%}
 
   <!-- Wrap all page content here -->
   <div id="wrap">
@@ -53,30 +65,13 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
+            {% if search_artists_url == 'johnny' %}
             <li>
-              {% if (request.endpoint == 'venues') or
-                (request.endpoint == 'search_venues') or
-                (request.endpoint == 'show_venue') %}
-              <form class="search" method="post" action="/venues/search">
-                <input class="form-control"
-                  type="search"
-                  name="search_term"
-                  placeholder="Find a venue"
-                  aria-label="Search">
-              </form>
-              {% endif %}
-              {% if (request.endpoint == 'artists') or
-                (request.endpoint == 'search_artists') or
-                (request.endpoint == 'show_artist') %}
-              <form class="search" method="post" action="/artists/search">
-                <input class="form-control"
-                  type="search"
-                  name="search_term"
-                  placeholder="Find an artist"
-                  aria-label="Search">
-              </form>
-              {% endif %}
+              <div style="padding-top: 10px;">
+              <button type="button" class="btn" >Search</button>
+              </div>
             </li>
+            {% endif %}
           </ul>
           <ul class="nav navbar-nav">
             <li {% if request.endpoint == 'venues' %} class="active" {% endif %}><a href="{{ url_for('venues') }}">Venues</a></li>
@@ -101,7 +96,12 @@
         {% endif %}
       {% endwith %}
 
-      {% block content %}{% endblock %}
+{% if search_venues_url or search_artists_url %}
+  {% include 'layouts/search-form.html' %}
+{% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
 
     </main>
 

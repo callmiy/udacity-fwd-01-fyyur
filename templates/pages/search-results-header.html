@@ -1,0 +1,13 @@
+<h3>{{ results.count }} search results {% if search_term %}for:{% endif %}</h3>
+
+{% if search_term %}
+<div style="padding-left: 50px;">
+  {% if search_term.name %}
+    <h5>{{ 'Artist' if is_artist else 'Venue' }} name: {{ search_term.name }}</h5>
+  {% endif %} {% if search_term.city %}
+  <h5>City: {{ search_term.city }}</h5>
+  {% endif %} {% if search_term.state %}
+  <h5>State: {{ search_term.state }}</h5>
+  {% endif %}
+</div>
+{% endif %}

@@ -1,0 +1,69 @@
+<style>
+  .search-form {
+    border: 1px solid #e0dddd;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 300px;
+    position: relative;
+  }
+
+  .search-form-control-wrapper {
+  }
+
+  .search-form__header {
+    top: 5px;
+    background: white;
+  }
+
+  .search-form__control--city {
+    margin-right: 10px;
+  }
+</style>
+
+<div style="margin-bottom: 30px;">
+  <form
+    class="search-form"
+    method="post"
+    action="{{ search_artists_url or search_venues_url }}"
+  >
+    <label class="search-form__header">
+      Find {{ 'artist' if search_artists_url else 'venue' }}
+    </label>
+
+    <div class="search-form-control-wrapper">
+      <div class="form-group search-form__control--city">
+        <label for="">
+          {{ 'Artist' if search_artists_url else 'Venue' }}
+        </label>
+        <input
+          class="form-control"
+          type="search"
+          name="name"
+          aria-label="Search"
+        />
+      </div>
+
+      <div class="form-group search-form__control--city">
+        <label for="">City</label>
+        <input
+          class="form-control"
+          type="search"
+          name="city"
+          aria-label="Search"
+        />
+      </div>
+
+      <div class="form-group search-form__control--state">
+        <label for="">State</label>
+        <input
+          class="form-control search-form__control"
+          type="search"
+          name="state"
+          aria-label="Search"
+        />
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-default">Search</button>
+  </form>
+</div>

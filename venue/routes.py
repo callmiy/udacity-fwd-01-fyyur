@@ -78,24 +78,6 @@ def get_show_venue_data(venue_id):
     return venue
 
 
-def get_search_venue_data(search_term):
-    today = datetime.now()
-    query = Venue.query.filter(Venue.name.ilike("%{}%".format(search_term)))
-    data = query.all()
-
-    [
-        setattr(
-            d, "num_upcoming_shows", len([s for s in d.shows if s.start_time >= today]),
-        )
-        for d in data
-    ]
-
-    return {
-        "count": len(data),
-        "data": data,
-    }
-
-
 @app.route("/venues")
 def venues():
     # TODO: replace with real venues data.
@@ -109,8 +91,41 @@ def search_venues():
     # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.   # noqa E501
     # search for Hop should return "The Musical Hop".
     # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"   # noqa E501
-    search_term = request.form.get("search_term", "")
-    results = get_search_venue_data(search_term)
+    today = datetime.now()
+    form = request.form
+
+    name = form.get("name", "")
+    city = form.get("city", "")
+    state = form.get("state", "")
+
+    name_filter_query = Venue.name.ilike("%{}%".format(name))
+    city_filter_query = Venue.city.ilike("%{}%".format(city))
+    state_filter_query = Venue.state.ilike("%{}%".format(state))
+
+    query = (
+        Venue.query.filter(name_filter_query)
+        .filter(city_filter_query)
+        .filter(state_filter_query)
+    )
+
+    data = query.all()
+
+    [
+        setattr(
+            d, "num_upcoming_shows", len([s for s in d.shows if s.start_time >= today]),
+        )
+        for d in data
+    ]
+
+    results = {
+        "count": len(data),
+        "data": data,
+    }
+
+    if not (name or city or state):
+        return render_template("pages/search_artists.html", results=results,)
+
+    search_term = {"name": name, "city": city, "state": state}
 
     return render_template(
         "pages/search_venues.html", results=results, search_term=search_term,
