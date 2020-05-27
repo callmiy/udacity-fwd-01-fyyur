@@ -1,6 +1,6 @@
 import sys
 from datetime import datetime
-from flask import render_template, request, flash, url_for, redirect
+from flask import render_template, request, flash, url_for, redirect, abort, jsonify
 from app import app, db
 from forms import VenueForm
 from mock_data import edit_venue_data
@@ -190,7 +190,16 @@ def delete_venue(venue_id):
 
     # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that   # noqa E501
     # clicking that button delete it from the db then redirect the user to the homepage
-    return None
+    venue = Venue.query.get(venue_id)
+
+    if not venue:
+        abort(404)
+
+    try:
+        venue.delete()
+    except:
+        abort(400)
+    return jsonify({"deleted": True, "id": venue_id})
 
 
 @app.route("/venues/<int:venue_id>/edit", methods=["GET"])

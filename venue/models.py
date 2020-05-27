@@ -35,4 +35,8 @@ class Venue(db.Model):
     def __repr__(self):
         return self.name
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
